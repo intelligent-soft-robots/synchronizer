@@ -68,6 +68,8 @@ void* _run_follower(void* freq)
     rc.get_statistics(t, st, tf, sw, average_frequency, cf, wf);
 
     shared_memory::set("ut_sync_exchange", "frequency", average_frequency);
+
+    return nullptr;
 }
 
 TEST_F(Synchronizer_tests, test_sync)

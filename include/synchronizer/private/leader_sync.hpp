@@ -19,8 +19,8 @@ public:
     void stop_sync();
 
 private:
-    shared_memory::LockedConditionVariable cv_;
     std::string memory_segment_;
     bool is_sync_mode_;
+    shared_memory::LockedConditionVariable cv_;
 };
 }

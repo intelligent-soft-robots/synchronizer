@@ -1,6 +1,9 @@
 <?xml version="1.0"?>
+<?xml-model
+   href="http://download.ros.org/schema/package_format3.xsd"
+   schematypens="http://www.w3.org/2001/XMLSchema"?>
 
-<package>
+<package format="3">
 
   <name>synchronizer</name>
   <version>1.0.0</version>
@@ -9,22 +12,19 @@
   <author email="vberenz@tuebingen.mpg.de">Vincent Berenz</author>
   <maintainer email="vberenz@tuebingen.mpg.de">Vincent Berenz</maintainer>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
-  <!-- This provide cmake macros to help building the project. -->
-  <build_depend> mpi_cmake_modules </build_depend>
-  <run_depend>   mpi_cmake_modules </run_depend>
+  <depend>mpi_cmake_modules</depend>
+  <depend>shared_memory</depend>
+  <depend>real_time_tools</depend>
+  <depend>pybind11_vendor</depend>
 
-  <build_depend> shared_memory </build_depend>
-  <run_depend> shared_memory </run_depend>
+  <test_depend>ament_cmake_gtest</test_depend>
+  <test_depend>ament_cmake_nose</test_depend>
 
-  <build_depend> real_time_tools </build_depend>
-  <run_depend> real_time_tools </run_depend>
-  
-  <build_depend> pybind11_catkin </build_depend>
-
-  
   <export>
+    <build_type>ament_cmake</build_type>
   </export>
 
 </package>
+

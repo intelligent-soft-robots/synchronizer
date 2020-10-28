@@ -1,37 +1,59 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(synchronizer)
+cmake_minimum_required(VERSION 3.10.2)
+project(synchronizer) 
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wl,--no-as-needed")
+# Using C++17
+if(NOT CMAKE_C_STANDARD)
+  set(CMAKE_C_STANDARD 99)
+endif()
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
 
-find_package(catkin REQUIRED COMPONENTS
+
+################
+# Dependencies #
+################
+
+find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_python REQUIRED)
+find_package(mpi_cmake_modules REQUIRED)
+find_package(shared_memory REQUIRED)
+find_package(real_time_tools REQUIRED)
+find_package(pybind11_vendor REQUIRED)
+find_package(pybind11 REQUIRED)
+find_package(cereal REQUIRED)
+ament_export_dependencies(
   mpi_cmake_modules
-  pybind11_catkin
+  pybind11
   shared_memory
-  real_time_tools)
+  real_time_tools
+  cereal)
 
-include_directories(include ${catkin_INCLUDE_DIRS} )
 
-catkin_package (
-INCLUDE_DIRS include
-CATKIN_DEPENDS mpi_cmake_modules shared_memory real_time_tools
-LIBRARIES synchronizers
-)
+# prepare to export all needed targets
+set(all_targets)
+set(all_target_exports)
 
-DEFINE_OS()
 
-###############
-# add library #
-###############
+###########
+# Library #
+###########
 
-add_library(synchronizers 
+add_library( ${PROJECT_NAME} SHARED
   src/follower_sync.cpp
   src/leader_sync.cpp
   src/follower.cpp
-  src/leader.cpp
-  )
-target_link_libraries(synchronizers
-  ${catkin_LIBRARIES}
-)
+  src/leader.cpp )
+target_include_directories(
+  ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+ament_target_dependencies(${PROJECT_NAME} cereal)
+target_link_libraries(${PROJECT_NAME} shared_memory::shared_memory)
+target_link_libraries(${PROJECT_NAME} real_time_tools::real_time_tools)
+ament_export_interfaces(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
+list(APPEND all_targets ${PROJECT_NAME})
+list(APPEND all_target_exports export_${PROJECT_NAME})
+
 
 #########
 # demos #
@@ -39,35 +61,78 @@ target_link_libraries(synchronizers
 
 add_executable(demo_follower
   demos/demo_follower.cpp)
-target_link_libraries(demo_follower synchronizers)
+target_include_directories(
+  demo_follower
+  PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+         $<INSTALL_INTERFACE:include>)
+target_link_libraries(demo_follower ${PROJECT_NAME})
+set(all_targets ${all_targets} demo_follower)
+install(TARGETS demo_follower RUNTIME DESTINATION lib/${PROJECT_NAME})
 
 add_executable(demo_leader
   demos/demo_leader.cpp)
-target_link_libraries(demo_leader synchronizers)
+target_include_directories(
+  demo_leader
+  PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+         $<INSTALL_INTERFACE:include>)
+target_link_libraries(demo_leader ${PROJECT_NAME})
+set(all_targets ${all_targets} demo_leader)
+install(TARGETS demo_leader RUNTIME DESTINATION lib/${PROJECT_NAME})
+
+
+###################
+# Python wrappers #
+###################
+
+add_library(${PROJECT_NAME}_cpp_bindings MODULE srcpy/wrappers.cpp)
+target_link_libraries(${PROJECT_NAME}_cpp_bindings PRIVATE pybind11::module)
+target_link_libraries(${PROJECT_NAME}_cpp_bindings PRIVATE ${PYTHON_LIBRARIES})
+target_link_libraries(${PROJECT_NAME}_cpp_bindings PRIVATE ${PROJECT_NAME})
+set_target_properties(${PROJECT_NAME}_cpp_bindings
+                      PROPERTIES PREFIX "" SUFFIX "${PYTHON_MODULE_EXTENSION}")
+target_include_directories(
+  ${PROJECT_NAME}_cpp_bindings
+  PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+         $<INSTALL_INTERFACE:include> SYSTEM
+  PUBLIC ${PYTHON_INCLUDE_DIRS})
+_ament_cmake_python_get_python_install_dir()
+install(TARGETS ${PROJECT_NAME}_cpp_bindings DESTINATION ${PYTHON_INSTALL_DIR})
+
+
+#################
+# documentation #
+#################
+
+add_documentation()
+
+
+######################
+# Install and export #
+######################\
+
+install(DIRECTORY include/ DESTINATION include)
+install(
+  TARGETS ${all_targets}
+  EXPORT ${all_target_exports}
+  LIBRARY DESTINATION lib
+  ARCHIVE DESTINATION lib
+  RUNTIME DESTINATION bin
+  INCLUDES
+  DESTINATION include)
+ament_package()
+
 
 ##############
 # unit tests #
 ##############
-  
-catkin_add_gtest(synchronizer_unit_tests
-  tests/main.cpp
-  tests/unit_tests_synchronizer.cpp
-)
-target_link_libraries(synchronizer_unit_tests
-  synchronizers)
 
-###################
-# python bindings #
-###################
+if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  ament_add_gtest(test_${PROJECT_NAME} tests/main.cpp tests/unit_tests.cpp)
+  target_link_libraries(test_${PROJECT_NAME} ${PROJECT_NAME})
+endif()
 
-pybind11_add_module(synchronizer srcpy/wrappers.cpp)
-target_link_libraries(synchronizer PRIVATE synchronizers ${catkin_LIBRARIES})
-set_target_properties(synchronizer PROPERTIES
-  LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_GLOBAL_PYTHON_DESTINATION})
-install(TARGETS synchronizer DESTINATION ${CATKIN_GLOBAL_PYTHON_DESTINATION})
+      
 
-##########################
-# building documentation #
-##########################
 
-build_doxygen_documentation()
+
