@@ -89,7 +89,8 @@ target_link_libraries(${PROJECT_NAME}_cpp_bindings PRIVATE pybind11::module)
 target_link_libraries(${PROJECT_NAME}_cpp_bindings PRIVATE ${PYTHON_LIBRARIES})
 target_link_libraries(${PROJECT_NAME}_cpp_bindings PRIVATE ${PROJECT_NAME})
 set_target_properties(${PROJECT_NAME}_cpp_bindings
-                      PROPERTIES PREFIX "" SUFFIX "${PYTHON_MODULE_EXTENSION}")
+  PROPERTIES PREFIX "" SUFFIX "${PYTHON_MODULE_EXTENSION}"
+  OUTPUT_NAME ${PROJECT_NAME})
 target_include_directories(
   ${PROJECT_NAME}_cpp_bindings
   PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
