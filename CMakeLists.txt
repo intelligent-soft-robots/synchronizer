@@ -22,12 +22,15 @@ find_package(real_time_tools REQUIRED)
 find_package(pybind11_vendor REQUIRED)
 find_package(pybind11 REQUIRED)
 find_package(cereal REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem system thread)
+
 ament_export_dependencies(
   mpi_cmake_modules
   pybind11
   shared_memory
   real_time_tools
-  cereal)
+  cereal
+  Boost)
 
 
 # prepare to export all needed targets
