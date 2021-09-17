@@ -68,7 +68,7 @@ A follower can be linked to only one leader (at a time), and a leader to one fol
 
 ## Installation and compilation
 
-This is a catkin package. 
+This is an ament package. 
 Recommanded method for cloning is to use [treep](https://pypi.org/project/treep/) with configuration [treep_machines_in_motion](https://github.com/machines-in-motion/treep_machines_in_motion) and project "CORE_ROBOTICS"
 
 ## Licence
