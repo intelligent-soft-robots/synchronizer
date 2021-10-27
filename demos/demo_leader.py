@@ -1,4 +1,4 @@
-import synchronizer,time,shared_memory_py
+import synchronizer, time, shared_memory_py
 
 leader = synchronizer.Leader("sync_mem")
 
@@ -8,7 +8,7 @@ leader = synchronizer.Leader("sync_mem")
 print("sync: follower running as fast as possible")
 leader.start_sync(-1)
 time_start = time.time()
-while time.time()-time_start < 4 :
+while time.time() - time_start < 4:
     leader.pulse()
 
 # stopping synchronization,
@@ -23,7 +23,7 @@ time.sleep(3)
 print("sync: follower running as fast as possible")
 leader.start_sync(-1)
 time_start = time.time()
-while time.time()-time_start < 4 :
+while time.time() - time_start < 4:
     leader.pulse()
 
 print("leader exit")
