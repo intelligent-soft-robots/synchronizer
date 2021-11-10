@@ -39,4 +39,4 @@ void Follower::pulse()
         sync_.pulse();
     }
 }
-}
+}  // namespace synchronizer

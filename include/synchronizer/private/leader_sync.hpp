@@ -23,4 +23,4 @@ private:
     bool is_sync_mode_;
     shared_memory::LockedConditionVariable cv_;
 };
-}
+}  // namespace synchronizer

@@ -38,4 +38,4 @@ private:
     std::string memory_segment_;
     Follower_sync sync_;
 };
-}
+}  // namespace synchronizer

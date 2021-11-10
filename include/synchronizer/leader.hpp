@@ -50,4 +50,4 @@ private:
     std::string memory_segment_;
     std::unique_ptr<Leader_sync> sync_;
 };
-}
+}  // namespace synchronizer

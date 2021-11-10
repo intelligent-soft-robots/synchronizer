@@ -32,4 +32,4 @@ private:
     double async_frequency_;
     bool sync_on_start_;
 };
-}
+}  // namespace synchronizer

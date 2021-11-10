@@ -116,4 +116,4 @@ bool Follower_sync::read_sync_mode()
     previous_mode_ = is_sync_mode_;
     return false;
 }
-}
+}  // namespace synchronizer

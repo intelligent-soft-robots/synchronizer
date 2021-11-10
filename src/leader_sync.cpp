@@ -99,4 +99,4 @@ void Leader_sync::stop_sync()
     // giving hand back to Follower
     notify();
 }
-}
+}  // namespace synchronizer

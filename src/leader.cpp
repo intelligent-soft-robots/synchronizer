@@ -58,4 +58,4 @@ void Leader::pulse()
 {
     sync_->pulse();
 }
-}
+}  // namespace synchronizer
