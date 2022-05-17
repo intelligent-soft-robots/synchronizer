@@ -1,4 +1,5 @@
-import synchronizer, time, shared_memory_py
+import synchronizer
+import time
 
 leader = synchronizer.Leader("sync_mem")
 
