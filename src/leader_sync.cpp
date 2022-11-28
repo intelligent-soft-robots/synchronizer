@@ -1,5 +1,7 @@
 #include "synchronizer/private/leader_sync.hpp"
 
+#include <fmt/format.h>
+
 namespace synchronizer
 {
 Leader_sync::Leader_sync(std::string memory_segment, bool sync_on_start)
@@ -16,11 +18,11 @@ Leader_sync::Leader_sync(std::string memory_segment, bool sync_on_start)
     }
     catch (...)
     {
-        throw std::runtime_error(
-            std::string(
-                "synchronizer::Leader should be started after an instance") +
-            std::string(" of synchronizer::Follower of the same memory segment "
-                        "has been started"));
+        throw std::runtime_error(fmt::format(
+            "synchronizer::Leader for memory segment '{}' should be started "
+            "after an instance of synchronizer::Follower of the same memory "
+            "segment has been started.",
+            memory_segment));
     }
 
     if (sync_on_start)
