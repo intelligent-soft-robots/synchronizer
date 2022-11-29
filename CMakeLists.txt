@@ -22,6 +22,7 @@ find_package(real_time_tools REQUIRED)
 find_package(pybind11 REQUIRED)
 find_package(cereal REQUIRED)
 find_package(Boost REQUIRED COMPONENTS filesystem system thread)
+find_package(fmt REQUIRED)
 
 ament_export_dependencies(
   mpi_cmake_modules
@@ -29,7 +30,9 @@ ament_export_dependencies(
   shared_memory
   real_time_tools
   cereal
-  Boost)
+  Boost
+  fmt
+)
 
 
 # prepare to export all needed targets
@@ -52,6 +55,7 @@ target_include_directories(
 ament_target_dependencies(${PROJECT_NAME} cereal)
 target_link_libraries(${PROJECT_NAME} shared_memory::shared_memory)
 target_link_libraries(${PROJECT_NAME} real_time_tools::real_time_tools)
+target_link_libraries(${PROJECT_NAME} fmt::fmt)
 ament_export_interfaces(export_${PROJECT_NAME} HAS_LIBRARY_TARGET)
 list(APPEND all_targets ${PROJECT_NAME})
 list(APPEND all_target_exports export_${PROJECT_NAME})
